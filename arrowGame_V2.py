@@ -1,6 +1,6 @@
 import pygame
 import random
-
+from TSPDecoder import *
 
 def main():
     # In Processing, this is where void setup() would be #
@@ -16,6 +16,8 @@ def main():
     black = (0, 0, 0)  # Define the color black
     red = (255, 0 ,0)  # Define the color red
     white = (255, 255, 255)
+    TSP = TSPDecoder()
+
 
     # Set up the rectangle parameters
     rect_x = 100
@@ -57,8 +59,11 @@ def main():
             speed_x = random.randint(1, 3)
             speed_y = random.randint(-3, 3)
         arrows.append((x, y, speed_x, speed_y))
+        # Function to read TSP sensor input (simulate it for this example)
 
-    while True:
+
+
+    while TSP.available:
         # In Processing, this is where void draw() would be #
 
         # Check for pygame events
@@ -67,17 +72,24 @@ def main():
                 pygame.quit()
 
         # Get all pressed keys
-        keys = pygame.key.get_pressed()
+        frame = TSP.readFrame()
 
-        # Check if specific keys are pressed (return True)
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+
+        # Calculate average values for each region
+        top_left_avg = np.mean(frame[0:13, 0:9])
+        top_right_avg = np.mean(frame[0:13, 9:18])
+        bottom_right_avg = np.mean(frame[13:27, 9:18])
+        bottom_left_avg = np.mean(frame[13:27, 0:9])
+
+        # Adjust circle position based on touch location
+        if top_left_avg > (top_right_avg + bottom_right_avg + bottom_left_avg):
             circle_x -= circle_speed
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        elif top_right_avg > (top_left_avg + bottom_right_avg + bottom_left_avg ):
             circle_x += circle_speed
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
-            circle_y -= circle_speed
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        elif bottom_right_avg > (top_left_avg + top_right_avg + bottom_left_avg):
             circle_y += circle_speed
+        elif bottom_left_avg > (top_left_avg + top_right_avg + bottom_right_avg):
+            circle_y -= circle_speed
 
         # Move arrows and check for collision with the circle
         updated_arrows = []
