@@ -9,10 +9,12 @@ class Paddle:
         self.color = color
         self.screen_width = screen_width
 
-    def move(self, direction):
-        if direction == "LEFT":
+    def move(self, keys):
+        # Check if the left arrow key is pressed
+        if keys[pygame.K_LEFT]:
             self.x -= 5
-        elif direction == "RIGHT":
+        # Check if the right arrow key is pressed
+        elif keys[pygame.K_RIGHT]:
             self.x += 5
         # Bound the paddle within the screen width
         self.x = max(0, min(self.x, self.screen_width - self.width))
