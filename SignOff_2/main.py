@@ -3,6 +3,7 @@ import sys
 from ball import Ball
 from paddle import Paddle
 from brick import Brick
+from TSPDecoder import *
 
 # Constants
 SCREEN_WIDTH = 800
@@ -19,25 +20,34 @@ BRICK_ROWS = 5
 BRICK_COLS = 10
 BRICK_COLOR = (255, 0, 0)
 FPS = 60
+TSP = TSPDecoder()
+
 
 def handle_events():
     """
     Handle pygame events such as quitting the game.
     """
+    # In Processing, this is where void draw() would be #
+
+    # Check for pygame events
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT:  # If the screen is closed, quit the program
             pygame.quit()
-            sys.exit()
+
 
 def update_game_state(paddle, ball, bricks):
     """
     Update the game state based on user input and collision detection.
     """
-    # Handle user input for paddle movement
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
+    # Read frames from tsp board
+    frame = TSP.readFrame()
+
+    top_left_avg = np.mean(frame[0:13, 0:9])
+    top_right_avg = np.mean(frame[0:13, 9:18])
+
+    if top_left_avg > (top_right_avg):
         paddle.move("LEFT")
-    if keys[pygame.K_RIGHT]:
+    elif top_right_avg > (top_left_avg):
         paddle.move("RIGHT")
 
     # Move the ball and check for collisions with boundaries, paddle, and bricks
@@ -52,6 +62,7 @@ def update_game_state(paddle, ball, bricks):
         return False
 
     return True
+
 
 def draw_objects(screen, paddle, ball, bricks):
     """
@@ -69,6 +80,7 @@ def draw_objects(screen, paddle, ball, bricks):
     # Update the display
     pygame.display.flip()
 
+
 def main():
     # Initialize pygame
     pygame.init()
@@ -81,7 +93,8 @@ def main():
     clock = pygame.time.Clock()
 
     # Create the paddle and ball objects
-    paddle = Paddle(SCREEN_WIDTH // 2 - PADDLE_WIDTH // 2, SCREEN_HEIGHT - 50, PADDLE_WIDTH, PADDLE_HEIGHT, BLUE, SCREEN_WIDTH)
+    paddle = Paddle(SCREEN_WIDTH // 2 - PADDLE_WIDTH // 2, SCREEN_HEIGHT - 50, PADDLE_WIDTH, PADDLE_HEIGHT, BLUE,
+                    SCREEN_WIDTH)
     ball = Ball(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, BALL_RADIUS, WHITE, SCREEN_WIDTH)
 
     # Create the bricks
@@ -93,27 +106,28 @@ def main():
 
     # Main game loop
     running = True
-    while running:
-        # Handle events
-        handle_events()
+    while TSP.available:
+        while running:
+            # Handle events
+            handle_events()
 
-        # Update game state and check for game over
-        running = update_game_state(paddle, ball, bricks)
+            # Update game state and check for game over
+            running = update_game_state(paddle, ball, bricks)
 
-        # Draw game objects
-        draw_objects(screen, paddle, ball, bricks)
+            # Draw game objects
+            draw_objects(screen, paddle, ball, bricks)
 
-        # Cap the frame rate
-        clock.tick(FPS)
+            # Cap the frame rate
+            clock.tick(FPS)
+            # Game over screen
+        font = pygame.font.SysFont(None, 64)
+        text = font.render("Game Over!", True, WHITE)
+        screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2))
+        pygame.display.flip()
+        pygame.time.wait(3000)
+        pygame.quit()
+        sys.exit()
 
-    # Game over screen
-    font = pygame.font.SysFont(None, 64)
-    text = font.render("Game Over!", True, WHITE)
-    screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2))
-    pygame.display.flip()
-    pygame.time.wait(3000)
-    pygame.quit()
-    sys.exit()
 
 if __name__ == "__main__":
     main()

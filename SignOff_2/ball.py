@@ -6,11 +6,12 @@ class Ball:
         self.y = y
         self.radius = radius
         self.color = color
-        self.vx = random.choice([-5, 5])
-        self.vy = -5
+        self.vx = random.choice([-2, 2])
+        self.vy = -2
         self.screen_width = screen_width
         self.prev_positions = []
 
+    #sets the ball in motion
     def move(self):
         self.prev_positions.append((self.x, self.y))
         if len(self.prev_positions) > 10:
@@ -28,17 +29,19 @@ class Ball:
         # Draw current ball
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
 
-
+    #checks if ball collides with borders
     def check_boundary_collision(self):
         if self.x - self.radius <= 0 or self.x + self.radius >= self.screen_width:
             self.vx *= -1
         if self.y - self.radius <= 0:
             self.vy *= -1
 
+    #checks if ball collides with paddle
     def check_paddle_collision(self, paddle):
         if self.y + self.radius >= paddle.y and self.x >= paddle.x and self.x <= paddle.x + paddle.width:
             self.vy *= -1
 
+    #checks wether ball collides with brick
     def check_brick_collision(self, bricks):
         for brick in bricks:
             if self.y - self.radius <= brick.y + brick.height and self.x >= brick.x and self.x <= brick.x + brick.width:

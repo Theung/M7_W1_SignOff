@@ -1,6 +1,7 @@
 import pygame
 
 class Brick:
+    #class the drag brick and sets it parameters
     def __init__(self, x, y, width, height, color):
         self.x = x
         self.y = y
