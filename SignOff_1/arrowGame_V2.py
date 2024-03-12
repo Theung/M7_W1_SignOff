@@ -2,6 +2,8 @@ import pygame
 import random
 from TSPDecoder import *
 
+
+
 def main():
     # In Processing, this is where void setup() would be #
     # screen sizes
@@ -19,18 +21,13 @@ def main():
     TSP = TSPDecoder()
 
 
-    # Set up the rectangle parameters
-    rect_x = 100
-    rect_y = 50
-    rect_width = 50
-    rect_height = 50
-    rect_speed = 5
+
 
     # Set up the circle parameters
     circle_radius = 20
     circle_x = screen_width // 2
     circle_y = screen_height // 2
-    circle_speed = 5
+    circle_speed = 3
 
     # Set up the arrow parameters
     arrow_size = 20
@@ -81,14 +78,15 @@ def main():
         bottom_right_avg = np.mean(frame[13:27, 9:18])
         bottom_left_avg = np.mean(frame[13:27, 0:9])
 
+        margin = 5
         # Adjust circle position based on touch location
-        if top_left_avg > (top_right_avg + bottom_right_avg + bottom_left_avg):
+        if top_left_avg > (top_right_avg + bottom_right_avg + bottom_left_avg + margin):
             circle_x -= circle_speed
-        elif top_right_avg > (top_left_avg + bottom_right_avg + bottom_left_avg ):
+        elif top_right_avg > (top_left_avg + bottom_right_avg + bottom_left_avg + margin):
             circle_x += circle_speed
-        elif bottom_right_avg > (top_left_avg + top_right_avg + bottom_left_avg):
+        elif bottom_right_avg > (top_left_avg + top_right_avg + bottom_left_avg + margin):
             circle_y += circle_speed
-        elif bottom_left_avg > (top_left_avg + top_right_avg + bottom_right_avg):
+        elif bottom_left_avg > (top_left_avg + top_right_avg + bottom_right_avg + margin ):
             circle_y -= circle_speed
 
         # Move arrows and check for collision with the circle

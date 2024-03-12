@@ -5,7 +5,6 @@ import serial.tools.list_ports
 import time
 import threading
 
-
 class TSPDecoder:
     """
     TSPDecoder class for handling communication with the TSP device.
@@ -34,7 +33,7 @@ class TSPDecoder:
        Initializes the TSPDecoder instance.
 
        Parameters
-       ----------
+       ---------- 
        port : str, optional
            The serial port to use. If not provided, it finds the first connected Arduino.
        baudrate : int, optional
